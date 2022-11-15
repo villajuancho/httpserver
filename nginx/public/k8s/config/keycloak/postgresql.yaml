@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-psql
+  namespace: keycloak-namespace
+spec:
+  selector:
+    app: keycloak-psql
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+# PostgreSQL StatefulSet - ConfigMap
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: keycloak-psql
+  namespace: keycloak-namespace
+spec:
+  selector:
+    matchLabels:
+      app: keycloak-psql
+  serviceName: keycloak-psql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: keycloak-psql
+    spec:
+      containers:
+      - name: keycloak-psql
+        image: nexus/postgres:9.6
+        volumeMounts:
+        - name: keycloak-db-disk
+          mountPath: /data
+          subPath: pgdata
+        env:
+        - name: "POSTGRES_USER"
+          value: "postgres"
+        - name: "POSTGRES_DB"
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: keycloak-psql
+              key: password
+        - name: "PGDATA"
+          value: "/data/pgdata"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: selectkey
+                operator: In
+                values:
+                - 'selectvalue'
+      volumes:
+        - name: keycloak-db-disk
+          persistentVolumeClaim:
+            claimName: keycloak-psql-pvc

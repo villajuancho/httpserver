@@ -1,0 +1,74 @@
+version: "3.9"
+
+networks:
+  prd:
+    driver: bridge
+
+services:
+  postgres:
+    image: "postgres:15.0"
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "postgres"
+      POSTGRES_PASSWORD: "Passw0rd!"
+      PGDATA: "/data/pgdata"
+    networks:
+      - prd
+    volumes:
+      - /Volumes/INFO_02/POLLA/volumen/postgres:/data
+  pgadmin:
+    image: "dpage/pgadmin4:6.15"
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: villa.juancho@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: Passw0rd!
+    networks:
+      - prd
+  proxy:
+    image: "nginx:1.23.2"
+    restart: unless-stopped
+    networks:
+      - prd
+    volumes:
+      - /Volumes/INFO_02/POLLA/deployment/prd/nginx/public:/usr/share/nginx/html
+      - /Volumes/INFO_02/POLLA/deployment/prd/nginx/secure/:/etc/nginx/secure/
+      - /Volumes/INFO_02/POLLA/deployment/prd/nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "443:443"
+  proxypre:
+    image: "nginx:1.23.2"
+    restart: unless-stopped
+    networks:
+      - prd
+    volumes:
+      - /Volumes/INFO_02/POLLA/deployment/pre/nginx/public:/usr/share/nginx/html
+      - /Volumes/INFO_02/POLLA/deployment/pre/nginx/secure/:/etc/nginx/secure/
+      - /Volumes/INFO_02/POLLA/deployment/pre/nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8443:443"
+  api-auth:
+    image: "node:14.21.0"
+    restart: unless-stopped
+    working_dir: /usr/src/app
+    command: npm start
+    environment:
+      DATABASE_PASS: Passw0rd!
+      DATABASE_SCHEMA: polla
+    networks:
+      - prd
+    volumes:
+      - /Volumes/INFO_02/POLLA/api-auth:/usr/src/app
+  api-polla:
+    image: "node:14.21.0"
+    restart: unless-stopped
+    working_dir: /usr/src/app
+    command: npm start
+    environment:
+      DATABASE_PASS: Passw0rd!
+      DATABASE_SCHEMA: polla
+    networks:
+      - prd
+    volumes:
+      - /Volumes/INFO_02/POLLA/api-polla:/usr/src/app
+      

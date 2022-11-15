@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: kong-namespace
+  name: kong-gateway
+  labels:
+    app: kong-gateway
+spec:
+  selector:
+    matchLabels:
+      app: kong-gateway
+  template:
+    metadata:
+      labels:
+        app: kong-gateway 
+    spec:
+      containers:
+      - name: kong-gateway
+        imagePullPolicy: IfNotPresent
+        image: 172.50.10.45:5000/kongoidc:2.8
+        env:
+        - name: "KONG_DATABASE"
+          value: "postgres"
+        - name: KONG_PG_HOST
+          value: "kong-database"
+        - name: KONG_PG_USER
+          value: "kong"
+        - name: KONG_PG_PASSWORD
+          value: "kongpass"
+        - name: KONG_PROXY_ACCESS_LOG
+          value: "/dev/stdout"
+        - name: KONG_ADMIN_ACCESS_LOG
+          value: "/dev/stdout"
+        - name: KONG_PROXY_ERROR_LOG
+          value: "/dev/stderr"
+        - name: KONG_ADMIN_ERROR_LOG
+          value: "/dev/stderr"
+        - name: KONG_ADMIN_LISTEN
+          value: "0.0.0.0:8001, 0.0.0.0:8444 ssl"
+        - name: KONG_PLUGINS
+          value: "bundled,oidc"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kong-gateway
+  labels:
+    service: kong-gateway
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '8001'
+spec:
+  selector:
+    app: kong-gateway  
+  type: LoadBalancer
+  ports:
+  - port: 8000
+    name: service
+    targetPort: 8000
+    protocol: TCP
+  - port: 8080
+    name: service2
+    targetPort: 8080
+    protocol: TCP
+  - port: 8443
+    name: admin2
+    targetPort: 8443
+    protocol: TCP
+  - port: 8001
+    name: admin
+    targetPort: 8001
+    protocol: TCP

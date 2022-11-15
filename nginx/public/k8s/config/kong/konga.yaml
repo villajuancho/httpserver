@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kong-konga
+  namespace: kong-namespace
+  labels:
+    app: kong-konga
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kong-konga
+  template:
+    metadata:
+      labels:
+        app: kong-konga
+    spec:
+      containers:
+      - name: kong-konga
+        imagePullPolicy: IfNotPresent
+        image: nexus/pantsel/konga:0.14.9
+        volumeMounts:
+        - name: konga-data
+          mountPath: /data
+          subPath: konga
+        env:
+        - name: "NODE_ENV"
+          value: "production"
+        - name: TOKEN_SECRET
+          value: "{{somerandomstring}}"
+        - name: "STORAGE_PATH"
+          value: "/data/konga"
+      volumes:
+        - name: konga-data
+          persistentVolumeClaim:
+            claimName: konga-data-pvc
