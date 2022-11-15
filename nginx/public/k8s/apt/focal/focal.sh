@@ -1,1 +1,0 @@
-cat focal.tar.gz.* | tar xzvf -
