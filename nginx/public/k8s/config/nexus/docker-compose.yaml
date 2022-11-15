@@ -14,5 +14,5 @@ services:
       - "5001:5001"
       - "5002:5002"
     volumes:
-      - /home/ubuntu/nexus/nexus-data:/nexus-data
-      - /home/ubuntu/nexus/nexus-public/install:/opt/sonatype/nexus/public/install
+      - <path>/nexus/nexus-data:/nexus-data
+      - <path>/nexus/nexus-public/install:/opt/sonatype/nexus/public/install

@@ -26,7 +26,7 @@ mkdir -p $INSTALL_PATH/nexus/nexus-public/install
 mkdir -p $INSTALL_PATH/install/nexus
 cd $INSTALL_PATH/install/nexus
 
-curl -k -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/nexus/docker-compose.yaml
+curl https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/nexus/docker-compose.yaml | sed "s#<PATH>#$INSTALL_PATH#g" > docker-compose.yaml
 
 docker compose up -d
 
