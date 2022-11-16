@@ -3,6 +3,8 @@
 tar cvzf - focal/ | split -b 40m - focal.tar.gz.
 cat focal.tar.gz.* | tar xzvf -
 
+tar -czvf name-of-archive.tar.gz /path/to/directory-or-file
+
 
 tar cvzf - jammy/ | split -b 40m - jammy.tar.gz.
 
@@ -76,5 +78,24 @@ docker login -u admin -p passw0rd http://192.168.88.249:5000
 # bajar archivos imagenes
 cd $INSTALL_PATH/install
 
+curl -k -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/images.tar.gz.aa 
+
 tar -xvf images.tar.gz.aa
 
+# instalar imagenes
+chmod -R 777 images
+./images/k8s/download.sh
+./images/k8s/tag.sh --repo=192.168.88.249:5000
+./images/k8s/load.sh --repo=192.168.88.249:5000
+./images/kong/download.sh
+./images/kong/tag.sh --repo=192.168.88.249:5000
+./images/kong/load.sh --repo=192.168.88.249:5000
+./images/monitoreo/download.sh --repo=192.168.88.249:5000
+./images/monitoreo/tag.sh --repo=192.168.88.249:5000
+./images/monitoreo/load.sh --repo=192.168.88.249:5000
+
+
+# archivos adicionales
+mkdir -p $INSTALL_PATH/nexus/nexus-public/install/config
+cd $INSTALL_PATH/nexus/nexus-public/install/config
+curl -LO curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/configGit.sh && chmod 777 *.sh && ./configGit.sh
