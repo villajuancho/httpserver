@@ -43,7 +43,8 @@ clusterName: "cluster.local"
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
-cgroupDriver: "systemd"
+cgroupDriver: "cgroupfs"
+# cgroupDriver: "systemd"
 # kubelet specific options here
 ---
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
