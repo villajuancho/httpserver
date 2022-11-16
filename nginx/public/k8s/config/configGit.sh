@@ -6,3 +6,4 @@ curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/pu
 curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/kongoidc.tar
 curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/longhorn.tar
 curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/metrics.tar
+curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/config.yaml

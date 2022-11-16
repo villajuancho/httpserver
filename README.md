@@ -98,4 +98,107 @@ chmod -R 777 images
 # archivos adicionales
 mkdir -p $INSTALL_PATH/nexus/nexus-public/install/config
 cd $INSTALL_PATH/nexus/nexus-public/install/config
-curl -LO curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/configGit.sh && chmod 777 *.sh && ./configGit.sh
+curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/configGit.sh && chmod 777 *.sh && ./configGit.sh
+
+
+# ---------------
+
+# INSTALACION k8S
+
+# master
+
+INSTALL_PATH=/home/ubuntu
+mkdir -p $INSTALL_PATH/install
+cd $INSTALL_PATH/install
+
+echo "deb http://192.168.88.249:8099/repository/apt-focal/ focal main" | sudo tee /etc/apt/sources.list.d/nexus.list
+
+curl -LO http://192.168.88.249:8099/install/public.gpg.key
+apt-key add public.gpg.key
+apt update
+
+apt install -y socat conntrack ebtables ipset ipvsadm
+apt install -y gnupg curl
+apt install -y crun criu buildah
+apt install -y runc conmon
+apt install -y jq open-iscsi nfs-common
+
+apt install -y docker-ce
+
+docker version
+
+cat <<EOF | tee /etc/docker/daemon.json
+{
+  "insecure-registries" : [ "192.168.88.249:5000" ]
+}
+EOF
+
+systemctl restart docker
+
+docker login 192.168.88.249:5000 -u admin
+
+# INSTALL K8S 1.23.5"
+apt install kubeadm=1.23.5-00 kubelet=1.23.5-00 kubectl=1.23.5-00 cri-tools=1.23.0-00 kubernetes-cni=0.8.7-00
+
+# configuracion network"
+rm /etc/cni/net.d/*
+mkdir -p /etc/cni/net.d
+
+cat <<EOF | tee /etc/cni/net.d/100-bridge.conf
+{
+    "cniVersion": "0.3.1",
+    "type": "bridge",
+    "bridge": "cni0",
+    "isGateway": true,
+    "ipMasq": true,
+    "hairpinMode": true,
+    "ipam": {
+        "type": "host-local",
+        "routes": [
+            { "dst": "0.0.0.0/0" },
+            { "dst": "1100:200::1/24" }
+        ],
+        "ranges": [
+            [{ "subnet": "10.244.0.0/16" }],
+            [{ "subnet": "1100:200::/24" }]
+        ]
+    }
+}
+EOF
+
+cat <<EOF | tee /etc/cni/net.d/200-loopback.conf
+{
+    "cniVersion": "0.3.1",
+    "type": "loopback"
+}
+EOF
+
+cat <<EOF | tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+
+# Ajustes sistema"
+sysctl --system
+systemctl daemon-reload
+
+free -h
+swapoff -a
+swapoff -a
+sed -i.bak -r 's/(.+ swap .+)/#\1/' /etc/fstab
+systemctl mask swap.target
+free -h
+
+systemctl enable --now kubelet
+systemctl enable --now iscsid
+systemctl restart kubelet
+systemctl restart iscsid
+systemctl status iscsid
+
+
+kubectl version --client && kubeadm version
+
+
+
+
