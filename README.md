@@ -105,7 +105,7 @@ curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/pu
 
 # INSTALACION k8S
 
-# master
+# GENERAL
 
 INSTALL_PATH=/home/ubuntu
 mkdir -p $INSTALL_PATH/install
@@ -200,5 +200,16 @@ systemctl status iscsid
 kubectl version --client && kubeadm version
 
 
+# MASTER
+curl -LO http://192.168.88.249:8099/install/config/config.yaml
+sed -i 's/ip-address/192.168.88.27/' config.yaml
+sed -i 's/node-name/k8s-master1/' config.yaml
+sed -i "s/docker-repo/192.168.88.249:5000/" config.yaml
+sed -i "s/k8sversion/v1.23.5/" config.yaml
 
 
+kubeadm config images pull --config=$INSTALL_PATH/install/config.yaml
+kubeadm init --config=$INSTALL_PATH/install/config.yaml
+
+# add to .profile
+export KUBECONFIG=/etc/kubernetes/admin.conf
