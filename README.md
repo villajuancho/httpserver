@@ -111,9 +111,10 @@ INSTALL_PATH=/home/ubuntu
 mkdir -p $INSTALL_PATH/install
 cd $INSTALL_PATH/install
 
+curl -LO http://192.168.88.249:8099/install/public.gpg.key
+
 echo "deb http://192.168.88.249:8099/repository/apt-focal/ focal main" | sudo tee /etc/apt/sources.list.d/nexus.list
 
-curl -LO http://192.168.88.249:8099/install/public.gpg.key
 apt-key add public.gpg.key
 apt update
 
@@ -212,4 +213,64 @@ kubeadm config images pull --config=$INSTALL_PATH/install/config.yaml
 kubeadm init --config=$INSTALL_PATH/install/config.yaml
 
 # add to .profile
+cd ~
+vi .profile
 export KUBECONFIG=/etc/kubernetes/admin.conf
+
+kubectl get nodes
+
+
+# CALICO
+
+INSTALL_PATH=/home/ubuntu
+cd $INSTALL_PATH/install
+curl -LO http://192.168.88.249:8099/install/config/calico.tar	
+tar -xvf calico.tar
+cd calico
+kubectl apply -f tigera-operator.yaml
+kubectl get pod -A
+kubectl apply -f custom-resources.yaml	
+kubectl get pod -A
+
+
+# ADD MASTER
+rm -R /etc/cni/net.d
+kubeadm token create --print-join-command
+kubeadm init phase upload-certs --upload-certs
+
+al join adicionar --control-plane --certificate-key XXXXXXXX
+
+# ADD WORKER
+rm -R /etc/cni/net.d
+kubeadm token create --print-join-command
+
+# LONGHORN
+
+
+INSTALL_PATH=/home/ubuntu
+cd $INSTALL_PATH/install
+curl -LO http://192.168.88.249:8099/install/config/longhorn.tar	
+tar -xvf longhorn.tar
+cd longhorn
+
+cambiar por info de nexus
+sed -i 's/longhornio/192.168.88.249:5000\/longhornio/' longhorn.yaml
+
+kubectl apply -f longhorn.yaml
+kubectl get pod -A
+
+# METRICS
+
+
+INSTALL_PATH=/home/ubuntu
+cd $INSTALL_PATH/install
+curl -LO http://192.168.88.249:8099/install/config/metrics.tar	
+tar -xvf metrics.tar
+cd metrics
+
+cambiar por info de nexus
+sed -i 's/k8s.gcr.io/192.168.88.249:5000\/k8s.gcr.io/' metrics.yaml
+
+kubectl apply -f metrics.yaml
+kubectl get pod -A
+
