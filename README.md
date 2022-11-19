@@ -274,3 +274,4 @@ sed -i 's/k8s.gcr.io/192.168.88.249:5000\/k8s.gcr.io/' metrics.yaml
 kubectl apply -f metrics.yaml
 kubectl get pod -A
 
+# PROMETHEUS
