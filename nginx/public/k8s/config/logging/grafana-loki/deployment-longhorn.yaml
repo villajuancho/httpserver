@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-loki
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana-loki
+  template:
+    metadata:
+      name: grafana-loki
+      labels:
+        app: grafana-loki
+    spec:
+      containers:
+      - name: grafana-loki
+        image: grafana/loki:2.5.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: grafana-loki
+          containerPort: 3100
+        volumeMounts:
+          - name: grafana-loki-storage
+            mountPath: /loki
+          - name: grafana-loki-config
+            mountPath: /etc/loki/
+      volumes:
+        - name: grafana-loki-storage
+          persistentVolumeClaim:
+            claimName: grafana-loki-data
+        - name: grafana-loki-config
+          configMap:
+            name: grafana-loki-config

@@ -275,3 +275,43 @@ kubectl apply -f metrics.yaml
 kubectl get pod -A
 
 # PROMETHEUS
+
+INSTALL_PATH=/home/ubuntu
+cd $INSTALL_PATH/install
+curl -LO http://192.168.88.249:8099/install/config/prometheus.tar	
+tar -xvf prometheus.tar
+cd prometheus
+
+cambiar por info de nexus
+sed -i 's/nexus/192.168.88.249:5000/' alert-manager/*.yaml
+sed -i 's/nexus/192.168.88.249:5000/' base/*.yaml
+sed -i 's/nexus/192.168.88.249:5000/' grafana/*.yaml
+sed -i 's/nexus/192.168.88.249:5000/' metrics/*.yaml
+sed -i 's/nexus/192.168.88.249:5000/' node-exporter/*.yaml
+
+
+kubectl create -f base/namespace.yaml
+kubectl create -f base/clusterRole.yaml
+kubectl create -f base/config-map.yaml
+kubectl create  -f base/volumen.yaml
+kubectl create  -f base/deploy-longhorn.yaml
+
+kubectl get pod --namespace=monitoring 
+
+
+kubectl apply -f metrics/
+
+kubectl get pod -n kube-system
+
+kubectl create -f alert-manager/alert-manager-config-map.yaml
+kubectl create -f alert-manager/alert-template-config-map.yaml
+kubectl create -f alert-manager/deployment.yaml
+kubectl create -f alert-manager/service.yaml
+
+kubectl get pod --namespace=monitoring 
+
+
+kubectl create -f node-exporter/daemonset.yaml
+kubectl create -f node-exporter/service.yaml
+
+kubectl get pod --namespace=monitoring 
