@@ -315,3 +315,17 @@ kubectl create -f node-exporter/daemonset.yaml
 kubectl create -f node-exporter/service.yaml
 
 kubectl get pod --namespace=monitoring 
+
+
+# LOGGING
+
+INSTALL_PATH=/home/ubuntu
+cd $INSTALL_PATH/install
+curl -LO http://192.168.88.249:8099/install/config/logging.tar	
+tar -xvf logging.tar
+cd logging
+
+cambiar por info de nexus
+sed -i 's/image: /image: 192.168.88.249:5000\//' fluentbit/*.yaml
+sed -i 's/image: /image: 192.168.88.249:5000\//' grafana-loki/*.yaml
+
