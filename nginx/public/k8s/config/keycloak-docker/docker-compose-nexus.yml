@@ -7,7 +7,7 @@ networks:
 services:
 
   postgres:
-    image: 180.183.203.203:5000/postgres:13.2
+    image: <nexus>/postgres:13.2
     restart: unless-stopped
     environment:
       POSTGRES_DB: keycloakdb
@@ -30,7 +30,7 @@ services:
       DB_DATABASE: keycloakdb
       DB_USER: admindb
       DB_PASSWORD: Passw0rd
-    image: 180.183.203.203:5000/jboss/keycloak:16.1.0
+    image: <nexus>/jboss/keycloak:16.1.0
     ports:
       - "8080:8080"
       - "9990:9990"
@@ -43,4 +43,4 @@ volumes:
         driver_opts:
             type: 'none'
             o: 'bind'
-            device: '/home/administrator/keycloak/postgresql/data'
+            device: <path>
