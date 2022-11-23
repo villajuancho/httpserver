@@ -18,7 +18,7 @@ spec:
       containers:
       - name: kong-gateway
         imagePullPolicy: IfNotPresent
-        image: nexus/kong:2.8.1-alpine
+        image: nexus/kongoidc:latest
         env:
         - name: "KONG_DATABASE"
           value: "postgres"
@@ -43,39 +43,3 @@ spec:
             cpu: 500m
           requests:
             cpu: 200m
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: kong-gateway
-  namespace: kong-namespace
-  labels:
-    service: kong-gateway
-  annotations:
-    prometheus.io/scrape: 'true'
-    prometheus.io/port: '8001'
-spec:
-  selector:
-    app: kong-gateway  
-  type: NodePort
-  ports:
-  - port: 8000
-    name: service
-    targetPort: 8000
-    protocol: TCP
-    nodePort: 31600
-  - port: 8080
-    name: service2
-    targetPort: 8080
-    protocol: TCP
-    nodePort: 31680
-  - port: 8443
-    name: admin2
-    targetPort: 8443
-    protocol: TCP
-    nodePort: 31643
-  - port: 8001
-    name: admin
-    targetPort: 8001
-    protocol: TCP
-    nodePort: 31601
