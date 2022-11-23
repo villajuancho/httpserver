@@ -21,3 +21,22 @@ spec:
           ports:
             - name: mockapp
               containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mockapp
+  name: mockapp
+  namespace: mockapp
+spec:
+  ports:
+  - name: http
+    port: 3000
+    protocol: TCP
+    targetPort: http
+    nodePort: 31755
+  selector:
+    app: mockapp
+  sessionAffinity: None
+  type: NodePort
