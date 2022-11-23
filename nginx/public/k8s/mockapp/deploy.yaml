@@ -2,15 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mockapp
-  namespace: default
+  namespace: mockapp
+  labels:
+    app: mockapp
 spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mockapp
   template:
+    metadata:
+      labels:
+        app: mockapp
     spec:
       containers:
-        name: mockapp
-        image: nuxus/mockapp:latest
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 3000
-          name: http
-          protocol: TCP
+        - name: mockapp
+          image: nexus/mockapp:latest
+          ports:
+            - name: mockapp
+              containerPort: 3000
