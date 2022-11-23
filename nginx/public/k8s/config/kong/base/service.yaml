@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kong-gateway
+  namespace: kong-namespace
+  labels:
+    service: kong-gateway
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '8001'
+spec:
+  selector:
+    app: kong-gateway  
+  ports:
+  - port: 8001
+    name: admin
+    targetPort: 8001
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kong-gateway-call
+  namespace: kong-namespace
+  labels:
+    service: kong-gateway
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '8001'
+spec:
+  selector:
+    app: kong-gateway  
+  type: NodePort
+  ports:
+  - port: 8000
+    name: service-http
+    targetPort: 8000
+    protocol: TCP
+    nodePort: 30025
+  - port: 8443
+    name: service-https
+    targetPort: 8443
+    protocol: TCP
+    nodePort: 30026
