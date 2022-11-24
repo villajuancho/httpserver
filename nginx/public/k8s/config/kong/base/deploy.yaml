@@ -38,6 +38,8 @@ spec:
           value: "/dev/stderr"
         - name: KONG_ADMIN_LISTEN
           value: "0.0.0.0:8001, 0.0.0.0:8444 ssl"
+        - name: KONG_PLUGINS
+          value: "bundled,oidc,file-log-extended"
         resources:
           limits:
             cpu: 500m
