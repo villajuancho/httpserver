@@ -56,3 +56,4 @@ curl -v -u "$user:$pass" --upload-file "./metrics.tar" "http://$nexus/repository
 curl -v -u "$user:$pass" --upload-file "./logging.tar" "http://$nexus/repository/install/config/logging.tar"
 curl -v -u "$user:$pass" --upload-file "./config.yaml" "http://$nexus/repository/install/config/config.yaml"
 curl -v -u "$user:$pass" --upload-file "./mockapp.tar" "http://$nexus/repository/install/test/mockapp.tar"
+curl -v -u "$user:$pass" --upload-file "./public.gpg.key" "http://$nexus/repository/install/public.gpg.key"
