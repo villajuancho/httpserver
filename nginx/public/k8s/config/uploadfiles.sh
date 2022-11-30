@@ -1,13 +1,58 @@
-curl -v -u "admin:passw0rd" --upload-file "./calico.tar" "http://192.168.88.249:8099/repository/install/config/calico.tar"
-curl -v -u "admin:passw0rd" --upload-file "./grafana.tar" "http://192.168.88.249:8099/repository/install/config/grafana.tar"
-curl -v -u "admin:passw0rd" --upload-file "./k8s.tar" "http://192.168.88.249:8099/repository/install/config/k8s.tar"
-curl -v -u "admin:passw0rd" --upload-file "./keycloak.tar" "http://192.168.88.249:8099/repository/install/config/keycloak.tar"
-curl -v -u "admin:passw0rd" --upload-file "./keycloak-docker.tar" "http://192.168.88.249:8099/repository/install/config/keycloak-docker.tar"
-curl -v -u "admin:passw0rd" --upload-file "./kong.tar" "http://192.168.88.249:8099/repository/install/config/kong.tar"
-curl -v -u "admin:passw0rd" --upload-file "./prometheus.tar" "http://192.168.88.249:8099/repository/install/config/prometheus.tar"
-curl -v -u "admin:passw0rd" --upload-file "./kongoidc.tar" "http://192.168.88.249:8099/repository/install/config/kongoidc.tar"
-curl -v -u "admin:passw0rd" --upload-file "./longhorn.tar" "http://192.168.88.249:8099/repository/install/config/longhorn.tar"
-curl -v -u "admin:passw0rd" --upload-file "./metrics.tar" "http://192.168.88.249:8099/repository/install/config/metrics.tar"
-curl -v -u "admin:passw0rd" --upload-file "./logging.tar" "http://192.168.88.249:8099/repository/install/config/logging.tar"
-curl -v -u "admin:passw0rd" --upload-file "./config.yaml" "http://192.168.88.249:8099/repository/install/config/config.yaml"
-curl -v -u "admin:passw0rd" --upload-file "./mockapp.tar" "http://192.168.88.249:8099/repository/install/test/mockapp.tar"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --user=*)
+      user="${1#*=}"
+      ;;
+    --nexus=*)
+      nexus="${1#*=}"
+      ;;
+    --pass=*)
+      pass="${1#*=}"
+      ;;
+    *)
+      printf "***************************\n"
+      printf "* Error: Invalid argument. $1 \n"
+      printf "***************************\n"
+      exit 1
+  esac
+  shift
+done
+
+if [[ $nexus == '' ]];then
+  printf "*******************************************************************************\n"
+  printf "* Error: Missing --nexusapt=192.168.88.76:8099 \n"
+  printf "*******************************************************************************\n"
+  exit 1
+fi
+
+if [[ $user == '' ]];then
+  printf "*******************************************************************************\n"
+  printf "* Error: Missing --user=admin \n"
+  printf "*******************************************************************************\n"
+  exit 1
+fi
+
+
+if [[ $pass == '' ]];then
+  printf "*******************************************************************************\n"
+  printf "* Error: Missing --pass=passw0rd \n"
+  printf "*******************************************************************************\n"
+  exit 1
+fi
+
+
+
+
+curl -v -u "$user:$pass" --upload-file "./calico.tar" "http://$nexus/repository/install/config/calico.tar"
+curl -v -u "$user:$pass" --upload-file "./grafana.tar" "http://$nexus/repository/install/config/grafana.tar"
+curl -v -u "$user:$pass" --upload-file "./k8s.tar" "http://$nexus/repository/install/config/k8s.tar"
+curl -v -u "$user:$pass" --upload-file "./keycloak.tar" "http://$nexus/repository/install/config/keycloak.tar"
+curl -v -u "$user:$pass" --upload-file "./keycloak-docker.tar" "http://$nexus/repository/install/config/keycloak-docker.tar"
+curl -v -u "$user:$pass" --upload-file "./kong.tar" "http://$nexus/repository/install/config/kong.tar"
+curl -v -u "$user:$pass" --upload-file "./prometheus.tar" "http://$nexus/repository/install/config/prometheus.tar"
+curl -v -u "$user:$pass" --upload-file "./kongoidc.tar" "http://$nexus/repository/install/config/kongoidc.tar"
+curl -v -u "$user:$pass" --upload-file "./longhorn.tar" "http://$nexus/repository/install/config/longhorn.tar"
+curl -v -u "$user:$pass" --upload-file "./metrics.tar" "http://$nexus/repository/install/config/metrics.tar"
+curl -v -u "$user:$pass" --upload-file "./logging.tar" "http://$nexus/repository/install/config/logging.tar"
+curl -v -u "$user:$pass" --upload-file "./config.yaml" "http://$nexus/repository/install/config/config.yaml"
+curl -v -u "$user:$pass" --upload-file "./mockapp.tar" "http://$nexus/repository/install/test/mockapp.tar"
