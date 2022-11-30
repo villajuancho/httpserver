@@ -11,5 +11,5 @@ curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/pu
 curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/logging.tar
 curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/config.yaml
 curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/mockapp.tar
-curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/uploadfiles.sh
+curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/uploadfiles.sh
 curl -LO https://raw.githubusercontent.com/villajuancho/httpserver/main/nginx/public/k8s/config/config.yaml
