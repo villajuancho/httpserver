@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: konga-data-pvc
-  namespace: kong-namespace
+  name: prometheus-data
+  namespace: monitoring
 spec:
   accessModes:
     - ReadWriteMany
   storageClassName: longhorn
   resources:
     requests:
-      storage: 2Gi
+      storage: 10Gi

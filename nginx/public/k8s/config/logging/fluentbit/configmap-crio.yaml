@@ -63,16 +63,6 @@ data:
         auto_kubernetes_labels On
         line_format json
     
-    [OUTPUT]
-        Name            loki
-        Match           host.*
-        Host            ${FLUENT_LOKI_HOST}
-        Port            ${FLUENT_LOKI_PORT}
-        tenant_id "juancho"
-        labels job=fluentbit, mystream=$sub['stream']
-        auto_kubernetes_labels On
-        line_format json
-    
   output-elasticsearch.conf: |
     [OUTPUT]
         Name            es
