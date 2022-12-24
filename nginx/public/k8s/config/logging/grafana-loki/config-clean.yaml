@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: clean-loki-config
+  namespace: monitoring
+  labels:
+    k8s-app: clean-loki-config
+data:
+  # Configuration files: server, input, filters and output
+  # ======================================================
+  initset.sh: |
+    # configuracion crontab
+    echo "Se configuro crontab." >> /var/log/cron.log 2>&1
+    cat <<EOF | tee /etc/cron.d/init-cron
+    * * * * * root /etc/cron.d/run/deletefiles.sh
+    # Don't remove the empty line at the end of this file. It is required to run the cron job
+    EOF
+  deletefiles.sh: |
+    echo "Se ejecuto deletefiles." >> /var/log/cron.log 2>&1
+    # find /loki/chunks -mtime +1 -type f -delete
+    mkdir -p /loki/chunks/old
+    find /loki/chunks -mmin +600 -type f -exec mv '{}' /loki/chunks/old \;

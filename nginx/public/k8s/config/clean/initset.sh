@@ -1,0 +1,1 @@
+echo "Init Set Run - org" >> /var/log/cron.log 2>&1

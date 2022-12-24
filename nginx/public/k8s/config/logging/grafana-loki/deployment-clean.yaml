@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-loki
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana-loki
+  template:
+    metadata:
+      name: grafana-loki
+      labels:
+        app: grafana-loki
+    spec:
+      containers:
+      - name: grafana-loki
+        image: 192.168.88.249:5000/grafana/loki:2.5.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: grafana-loki
+          containerPort: 3100
+        volumeMounts:
+          - name: grafana-loki-storage
+            mountPath: /loki
+          - name: grafana-loki-config
+            mountPath: /etc/loki/
+      - name: clean-loki
+        image: 192.168.88.249:5000/clean:latest
+        imagePullPolicy: IfNotPresent
+        command: ["/etc/cron.d/run/setcron.sh && cron && tail -f /var/log/cron.log"]
+        ports:
+        - name: clean-loki
+          containerPort: 3101
+        volumeMounts:
+          - name: grafana-loki-storage
+            mountPath: /loki
+          - name: clean-loki-config
+            mountPath: /etc/cron.d/run/
+      volumes:
+        - name: grafana-loki-storage
+          persistentVolumeClaim:
+            claimName: grafana-loki-data
+        - name: grafana-loki-config
+          configMap:
+            name: grafana-loki-config
+        - name: clean-loki-config
+          configMap:
+            name: clean-loki-config
+            defaultMode: 0777
