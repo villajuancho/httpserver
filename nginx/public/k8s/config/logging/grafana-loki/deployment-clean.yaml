@@ -29,7 +29,6 @@ spec:
       - name: clean-loki
         image: 192.168.88.249:5000/clean:latest
         imagePullPolicy: IfNotPresent
-        command: ["/etc/cron.d/run/setcron.sh && cron && tail -f /var/log/cron.log"]
         ports:
         - name: clean-loki
           containerPort: 3101

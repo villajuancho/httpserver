@@ -10,13 +10,15 @@ data:
   # ======================================================
   initset.sh: |
     # configuracion crontab
-    echo "Se configuro crontab." >> /var/log/cron.log 2>&1
+    echo $(date) " - Se configuro crontab." >> /var/log/cron.log 2>&1
     cat <<EOF | tee /etc/cron.d/init-cron
-    * * * * * root /etc/cron.d/run/deletefiles.sh
+    0 2 * * * root /etc/cron.d/run/deletefiles.sh
     # Don't remove the empty line at the end of this file. It is required to run the cron job
     EOF
   deletefiles.sh: |
-    echo "Se ejecuto deletefiles." >> /var/log/cron.log 2>&1
+    echo $(date) " - Se ejecuto deletefiles." >> /var/log/cron.log 2>&1
     # find /loki/chunks -mtime +1 -type f -delete
     mkdir -p /loki/chunks/old
+    sleep 15s
     find /loki/chunks -mmin +600 -type f -exec mv '{}' /loki/chunks/old \;
+    
