@@ -1,0 +1,19 @@
+version: '3.9'
+
+networks:
+  cysdvps:
+    driver: bridge
+
+services:
+
+  pgadmin:
+    image: dpage/pgadmin4:6.15
+    name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@cysce.com
+      PGADMIN_DEFAULT_PASSWORD: Passw0rd!
+    networks:
+      - cysdvps
+    ports:
+      - "80:80"

@@ -1,0 +1,23 @@
+global:
+  smtp_smarthost: 'smtp.hostinger.com:465'
+  smtp_from: 'install@villamil.link'
+  smtp_auth_username: 'install@villamil.link'
+  smtp_auth_password: 'zT#9E6C9'
+templates:
+- '/etc/alertmanager/*.tmpl'
+route:
+  group_by: ['alertname', 'priority']
+  group_wait: 10s
+  group_interval: 60s
+  repeat_interval: 240s
+  receiver: 'alert-emailer'
+receivers:
+- name: alert-emailer
+  email_configs:
+  - to: 'jmvillamil@cysce.com'
+    from: 'install@villamil.link'
+    require_tls: false
+    smarthost: smtp.hostinger.com:465
+    auth_username: 'install@villamil.link'
+    auth_identity: 'install@villamil.link'
+    auth_password: 'zT#9E6C9'

@@ -1,0 +1,56 @@
+version: "3.9"
+networks:
+  monitoring:
+    driver: bridge
+services:
+  grafana:
+    container_name: grafana
+    image: "grafana/grafana:8.5.5"
+    restart: unless-stopped
+    networks:
+      - monitoring
+    ports:
+      - "3000:3000"
+    volumes:
+      - /Volumes/DATA/CYSCE/UCI/httpserver/nginx/public/k8s/config/prometheus/grafana/storage:/var/lib/grafana
+  prometheus:
+    container_name: prometheus
+    image: "prom/prometheus:v2.36.0"
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus2/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus/"
+      - "--storage.tsdb.retention.size=9GB"
+      - "--storage.tsdb.retention.time=2d"
+    networks:
+      - monitoring
+    ports:
+      - "9090:9090"
+    volumes:
+      - /Volumes/DATA/CYSCE/UCI/httpserver/nginx/public/k8s/config/prometheus/base/config/:/etc/prometheus2/
+      - /Volumes/DATA/CYSCE/UCI/httpserver/nginx/public/k8s/config/prometheus/base/logs:/prometheus/
+  alertmanager:
+    container_name: alertmanager
+    image: "prom/alertmanager:v0.24.0"
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/alertmanager/config.yml"
+      - "--storage.path=/alertmanager"
+    networks:
+      - monitoring
+    ports:
+      - "9093:9093"
+    volumes:
+      - /Volumes/DATA/CYSCE/UCI/httpserver/nginx/public/k8s/config/prometheus/alert-manager/config/:/etc/alertmanager/
+      - /Volumes/DATA/CYSCE/UCI/httpserver/nginx/public/k8s/config/prometheus/alert-manager/storage/:/alertmanager/
+  loki:
+    container_name: loki
+    image: "grafana/loki:2.5.0"
+    restart: unless-stopped
+    networks:
+      - monitoring
+    ports:
+      - "3100:3100"
+    volumes:
+      - /Volumes/DATA/CYSCE/UCI/httpserver/nginx/public/k8s/config/logging/grafana-loki/config/:/etc/loki/
+      - /Volumes/DATA/CYSCE/UCI/httpserver/nginx/public/k8s/config/logging/grafana-loki/storage/:/loki/

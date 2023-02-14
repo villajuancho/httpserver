@@ -1,0 +1,7 @@
+c
+S
+ {}:{alertname="High Pod Memory"}
+alert-emaileremail*”ÁÏ´ø¹2	ÎºªÜÏÇø_ÃÛÏ´ø¹p
+`
+#{}:{alertname="Low Memory < 900MB"}
+alert-emaileremail*µìÁÅÔ¨í2–î€¡ìÊÔ‰¢Ë ËÚûŠüã	µ›ÜÅÔ¨í

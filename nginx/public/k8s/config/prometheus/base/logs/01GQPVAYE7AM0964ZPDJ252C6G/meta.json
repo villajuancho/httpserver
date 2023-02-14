@@ -1,0 +1,17 @@
+{
+	"ulid": "01GQPVAYE7AM0964ZPDJ252C6G",
+	"minTime": 1674715936940,
+	"maxTime": 1674720000000,
+	"stats": {
+		"numSamples": 5263,
+		"numSeries": 1757,
+		"numChunks": 1757
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01GQPVAYE7AM0964ZPDJ252C6G"
+		]
+	},
+	"version": 1
+}

@@ -1,0 +1,10 @@
+groups:
+- name: low memory free
+  rules:
+  - alert: Low Memory < 900MB
+    expr: node_memory_MemFree_bytes < 900000000
+    for: 1m
+    labels:
+      severity: slack
+    annotations:
+      summary: High Memory Usage

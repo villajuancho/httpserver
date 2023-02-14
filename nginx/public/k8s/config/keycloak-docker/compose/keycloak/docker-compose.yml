@@ -1,0 +1,44 @@
+version: '3.9'
+
+networks:
+  cysdvps:
+    driver: bridge
+
+services:
+
+  pgadmin:
+    image: dpage/pgadmin4:6.15
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@cysce.com
+      PGADMIN_DEFAULT_PASSWORD: Passw0rd!
+    networks:
+      - cysdvps
+    ports:
+      - "8061:80"
+  
+  keycloak:
+    image: quay.io/keycloak/keycloak:20.0.3
+    container_name: keycloak
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: passw0rd
+    #entrypoint: ["sleep","3h"]
+    command: ["start"]
+    networks:
+      - cysdvps
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - keycloak-conf:/opt/keycloak/conf
+    
+volumes:
+  keycloak-conf:
+      driver: local
+      driver_opts:
+          type: 'none'
+          o: 'bind'
+          device: /data/conf

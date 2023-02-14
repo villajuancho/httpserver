@@ -1,0 +1,43 @@
+version: '3.9'
+
+networks:
+  cysdvps1:
+    driver: bridge
+
+services:
+
+  web-ui:
+    build:
+      context: https://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:x-oauth-basic@github.com/CYS-UCI/web-ui.git#main
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: web-ui
+    networks:
+      - cysdvps1
+    ports:
+     - "3000:3000"
+    volumes:
+      - /home/ubuntu/uci/data/webui/keycloak.json:/app/public/coc/public/keycloak.json
+
+  nginx:
+    image: nginx:1.23.2
+    container_name: proxy
+    restart: unless-stopped
+    #command: ["sleep","5h"]
+    networks:
+      - cysdvps1
+    ports:  
+      - "80:80"
+      - "443:443"
+    volumes:
+      - nginx-data:/etc/nginx
+
+volumes:
+  
+  nginx-data:
+      driver: local
+      driver_opts:
+          type: 'none'
+          o: 'bind'
+          device: /home/ubuntu/uci/data/nginxconf
+

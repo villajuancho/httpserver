@@ -1,0 +1,83 @@
+version: '3.9'
+
+networks:
+  cysdvps1:
+    driver: bridge
+
+services:
+
+  pgadmin:
+    image: dpage/pgadmin4:6.15
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@cysce.com
+      PGADMIN_DEFAULT_PASSWORD: Passw0rd!
+    networks:
+      - cysdvps1
+    ports:
+      - "8061:80"
+  
+  postgres:
+    image: postgres:13.2
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keycloakdb
+      POSTGRES_USER: admindb
+      POSTGRES_PASSWORD: Passw0rd
+    networks:
+      - cysdvps1
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:20.0.3
+    depends_on:
+      - postgres
+    container_name: keycloak
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: passw0rd
+    #entrypoint: ["sleep","3h"]
+    command: ["start"]
+    networks:
+      - cysdvps1
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - keycloak-conf:/opt/keycloak/conf
+  
+  nginx:
+    image: nginx:1.23.2
+    container_name: proxy
+    restart: unless-stopped
+    #command: ["sleep","5h"]
+    networks:
+      - cysdvps1
+    ports:  
+      - "80:80"
+      - "443:443"
+    volumes:
+      - nginx-data:/etc/nginx
+
+volumes:
+  keycloak-conf:
+      driver: local
+      driver_opts:
+          type: 'none'
+          o: 'bind'
+          device: /Volumes/DATA/CYSCE/UCI/httpserver/nginx/public/k8s/config/keycloak-docker/compose/keycloakmac/data/conf
+  postgres-data:
+      driver: local
+      driver_opts:
+          type: 'none'
+          o: 'bind'
+          device: /Volumes/DATA/CYSCE/UCI/httpserver/nginx/public/k8s/config/keycloak-docker/compose/keycloakmac/data/pg
+  nginx-data:
+      driver: local
+      driver_opts:
+          type: 'none'
+          o: 'bind'
+          device: /Volumes/DATA/CYSCE/UCI/httpserver/nginx/public/k8s/config/keycloak-docker/compose/keycloakmac/data/nginx
