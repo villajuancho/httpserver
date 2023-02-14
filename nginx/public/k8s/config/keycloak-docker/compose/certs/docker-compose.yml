@@ -1,0 +1,26 @@
+version: '3.9'
+
+networks:
+  cysdvps1:
+    driver: bridge
+
+services:
+
+  pgadmin:
+    image: nginx:1.23.2
+    container_name: certs
+    restart: unless-stopped
+    networks:
+      - cysdvps1
+    ports:  
+      - "80:80"
+    volumes:
+      - certs-vol:/usr/share/nginx
+
+volumes:
+  certs-vol:
+      driver: local
+      driver_opts:
+          type: 'none'
+          o: 'bind'
+          device: /data/nginx
